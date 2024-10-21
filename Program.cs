@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using TasksApi.Entities;
+
 namespace TasksApi
 {
     public class Program
@@ -8,6 +11,14 @@ namespace TasksApi
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+
+
+            builder.Services.AddDbContext<AppDbContext>(options => {
+
+                options.UseSqlServer(builder.Configuration.GetConnectionString("TaskAPIDB"));
+            
+            });
 
 
             builder.Services.AddCors(options =>
