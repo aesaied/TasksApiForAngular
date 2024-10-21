@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TasksApi.Entities;
 
@@ -19,6 +20,10 @@ namespace TasksApi
                 options.UseSqlServer(builder.Configuration.GetConnectionString("TaskAPIDB"));
             
             });
+
+            builder.Services.AddIdentity<AppUser,AppRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
 
             builder.Services.AddCors(options =>
