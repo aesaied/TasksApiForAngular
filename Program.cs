@@ -1,6 +1,11 @@
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TasksApi.Entities;
 
 namespace TasksApi
@@ -25,6 +30,37 @@ namespace TasksApi
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
+            var audience = builder.Configuration.GetValue<string>("JWT:Audiance");
+            var issuer = builder.Configuration.GetValue<string>("JWT:Issuer");
+            var SignKey = builder.Configuration.GetValue<string>("JWT:SignKey");
+
+            SignKey ??= "";
+
+
+
+            builder.Services.AddAuthentication(options=>
+            {
+                
+                options.DefaultScheme= JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            
+            }).AddJwtBearer(options => {
+
+                
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SignKey))
+                };
+            }
+                
+                );
 
             builder.Services.AddCors(options =>
             {
@@ -55,6 +91,30 @@ namespace TasksApi
             app.UseHttpsRedirection();
 
             app.UseCors("MyPolicy");
+            app.UseAuthentication();
+
+            // custom authentication
+            app.Use(async (cntx, next) => {
+
+                if (cntx != null)
+                {
+                    if (cntx.User.Identity.IsAuthenticated == false)
+                    {
+                        //  Authenticate  by  force
+
+                        if (cntx.Request.Headers.ContainsKey("Authorization"))
+                        {
+
+                         var  result = await  cntx.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
+                        }
+                    }
+
+                }
+
+               await next?.Invoke();
+            
+            });
+
             app.UseAuthorization();
 
 
