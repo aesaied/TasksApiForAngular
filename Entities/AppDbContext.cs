@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TasksApi.Entities;
 
 namespace TasksApi.Entities
 {
@@ -9,5 +10,6 @@ namespace TasksApi.Entities
         {
             
         }
+        public DbSet<TasksApi.Entities.Project> Project { get; set; } = default!;
     }
 }
