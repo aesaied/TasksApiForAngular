@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TasksApi.Entities;
 
@@ -11,9 +12,11 @@ using TasksApi.Entities;
 namespace TasksApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241029143257_AddTasks")]
+    partial class AddTasks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,23 +227,6 @@ namespace TasksApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("TasksApi.Entities.Attachment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("OriginalName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Path")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Attachments");
-                });
-
             modelBuilder.Entity("TasksApi.Entities.ETask", b =>
                 {
                     b.Property<int>("Id")
@@ -248,9 +234,6 @@ namespace TasksApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid?>("AttachmentId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -266,8 +249,6 @@ namespace TasksApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AttachmentId");
 
                     b.HasIndex("ProjectId");
 
@@ -345,17 +326,11 @@ namespace TasksApi.Migrations
 
             modelBuilder.Entity("TasksApi.Entities.ETask", b =>
                 {
-                    b.HasOne("TasksApi.Entities.Attachment", "Attachment")
-                        .WithMany()
-                        .HasForeignKey("AttachmentId");
-
                     b.HasOne("TasksApi.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Attachment");
 
                     b.Navigation("Project");
                 });

@@ -10,6 +10,13 @@ namespace TasksApi.Entities
         {
             
         }
-        public DbSet<TasksApi.Entities.Project> Project { get; set; } = default!;
+
+     
+        public DbSet<TasksApi.Entities.Project> Project { get; set; }
+
+        public DbSet<ETask> Tasks { get; set; }
+
+        public DbSet<Attachment> Attachments { get; set; }
     }
+
 }
